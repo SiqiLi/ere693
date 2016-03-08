@@ -63,9 +63,7 @@ class TopoHydro(object):
             
     def execute(self, parameters, messages):
         try:
-            log("Parameters are %s, %s, %s" % (parameters[0].valueAsText, parameters[1].valueAsText, parameters[2].valueAsText))
-
-
+            
             # Import arcpy module
             import arcpy
 
@@ -160,7 +158,7 @@ class ImpCov(object):
             
     def execute(self, parameters, messages):
         try:
-            log("Parameters are %s, %s" % (parameters[0].valueAsText, parameters[1].valueAsText))
+            
 
             # Import arcpy module
             import arcpy
@@ -252,7 +250,6 @@ class Runoff(object):
             
     def execute(self, parameters, messages):
         try:
-            log("Parameter is %s" % (parameters[0].valueAsText))
             # Import arcpy module
             import arcpy
 
