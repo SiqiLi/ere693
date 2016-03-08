@@ -161,6 +161,56 @@ class ImpCov(object):
     def execute(self, parameters, messages):
         try:
             log("Parameters are %s, %s" % (parameters[0].valueAsText, parameters[1].valueAsText))
+
+            # Import arcpy module
+            import arcpy
+
+
+            # Local variables:
+            Reclass_rast1 = "Reclass_rast1"
+            FlowDir_DEMf1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\FlowDir_DEMf1"
+            Impervious = "Impervious"
+            Impervious__3_ = Impervious
+            Feature_Impe1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\Feature_Impe1"
+            BlockSt_Feat1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\BlockSt_Feat1"
+            Aggrega_Bloc1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\Aggrega_Bloc1"
+            flowacc_weight = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\flowacc_weight"
+            Flowacc_unweight = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\Flowacc_unweight"
+            rastercalc1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\rastercalc1"
+            Reclass_rast2 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\Reclass_rast2"
+            rastercalc2 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\rastercalc2"
+            StreamT_rasterc1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\StreamT_rasterc1"
+
+            # Process: Calculate Field
+            arcpy.CalculateField_management(Impervious, "LENGTH", "1", "VB", "")
+
+            # Process: Feature to Raster
+            arcpy.FeatureToRaster_conversion(Impervious__3_, "LENGTH", Feature_Impe1, "4")
+
+            # Process: Block Statistics
+            BlockSt_Feat1 = arcpy.gp.BlockStatistics_sa(Feature_Impe1, "Rectangle 10 10 CELL", "SUM", "DATA")
+
+            # Process: Aggregate
+            Aggrega_Bloc1 = arcpy.gp.Aggregate_sa(BlockSt_Feat1, "10", "MEAN", "EXPAND", "DATA")
+
+            # Process: Flow Accumulation
+            flowacc_weight = arcpy.gp.FlowAccumulation_sa(FlowDir_DEMf1, Aggrega_Bloc1, "FLOAT")
+
+            # Process: Flow Accumulation (2)
+            Flowacc_unweight = arcpy.gp.FlowAccumulation_sa(FlowDir_DEMf1, "", "FLOAT")
+
+            # Process: Raster Calculator
+            rastercalc1 = arcpy.gp.RasterCalculator_sa("\"%flowacc_weight%\" / \"%Flowacc_unweight%\"")
+
+            # Process: Reclassify
+            Reclass_rast2 = arcpy.gp.Reclassify_sa(rastercalc1, "Value", "0 10 1;10 20 2;20 30 3;30 40 4;40 50 5;50 60 6;60 70 7;70 80 8;80 90 9;90 100 10", "DATA")
+
+            # Process: Raster Calculator (2)
+            rastercalc2 = arcpy.gp.RasterCalculator_sa("\"%Reclass_rast1%\" * \"%Reclass_rast2%\"")
+
+            # Process: Stream to Feature
+            StreamT_rasterc1 = arcpy.gp.StreamToFeature_sa(rastercalc2, FlowDir_DEMf1, "SIMPLIFY")
+
         except Exception as err:
             log(traceback.format_exc())
             log(err)
