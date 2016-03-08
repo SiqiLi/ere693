@@ -64,6 +64,53 @@ class TopoHydro(object):
     def execute(self, parameters, messages):
         try:
             log("Parameters are %s, %s, %s" % (parameters[0].valueAsText, parameters[1].valueAsText, parameters[2].valueAsText))
+
+
+            # Import arcpy module
+            import arcpy
+
+
+            # Local variables:
+            DEM = "DEM"
+            DEMfill = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\DEMfill"
+            AnalysisMask = "AnalysisMask"
+            AnalysisMaskRaster = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\AnalysisMaskRaster"
+            Output_drop_raster = ""
+            FlowDir_DEMf1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\FlowDir_DEMf1"
+            FlowAcc_Flow1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\FlowAcc_Flow1"
+            rastercalc = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\rastercalc"
+            Reclass_rast1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\Reclass_rast1"
+            StreamT_Reclass1 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\Lab06Data.gdb\\StreamT_Reclass1"
+
+            # Set Geoprocessing environments
+            arcpy.env.snapRaster = "DEM"
+            arcpy.env.mask = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\AnalysisMaskRaster"
+
+            # Process: Fill
+            DEMfill = arcpy.gp.Fill_sa(DEM, "")
+
+            # Process: Polygon to Raster
+            AnalysisMaskRaster = arcpy.PolygonToRaster_conversion(AnalysisMask, "OBJECTID", "CELL_CENTER", "NONE", "140")
+
+            # Process: Flow Direction
+            tempEnvironment0 = arcpy.env.mask
+            arcpy.env.mask = AnalysisMaskRaster
+            FlowDir_DEMf1 = arcpy.gp.FlowDirection_sa(DEMfill, "NORMAL", Output_drop_raster)
+            arcpy.env.mask = tempEnvironment0
+
+            # Process: Flow Accumulation
+            FlowAcc_Flow1 = arcpy.gp.FlowAccumulation_sa(FlowDir_DEMf1, "", "FLOAT")
+
+            # Process: Raster Calculator
+            rastercalc = arcpy.gp.RasterCalculator_sa("\"%FlowAcc_Flow1%\" * 40*40 / 43560")
+
+            # Process: Reclassify
+            Reclass_rast1 = arcpy.gp.Reclassify_sa(rastercalc, "Value", "0 6997 NODATA;6997 28312.03125 1", "DATA")
+
+            # Process: Stream to Feature
+            StreamT_Reclass1 = arcpy.gp.StreamToFeature_sa(Reclass_rast1, FlowDir_DEMf1, "SIMPLIFY")
+
+
         except Exception as err:
             log(traceback.format_exc())
             log(err)
