@@ -253,10 +253,64 @@ class Runoff(object):
     def execute(self, parameters, messages):
         try:
             log("Parameter is %s" % (parameters[0].valueAsText))
+            # Import arcpy module
+            import arcpy
+
+
+            # Local variables:
+            rastercalc = "rastercalc"
+            rastc5 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\rastc5"
+            rastc10 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\rastc10"
+            rastc50 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\rastc50"
+            rastc100 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\rastc100"
+            rastercalc1 = "rastercalc1"
+            rastc = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\rastc"
+            q2 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\q2"
+            q5 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\q5"
+            q10 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\q10"
+            rastc25 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\rastc25"
+            q25 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\q25"
+            q50 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\q50"
+            q100 = "\\\\hd.ad.syr.edu\\01\\e51673\\Documents\\Desktop\\Courses\\ERE693 GIS-Modeling\\Lab_06\\processdata.gdb\\q100"
+
+            # Process: Raster Calculator (2)
+            rastc5 = arcpy.gp.RasterCalculator_sa("248 * Power(\"%rastercalc%\" * 43560 / 5280 / 5280,0.670)")
+
+            # Process: Raster Calculator (3)
+            rastc10 = arcpy.gp.RasterCalculator_sa("334 * Power(\"%rastercalc%\" * 43560 / 5280 / 5280,0.665)")
+
+            # Process: Raster Calculator (5)
+            rastc50 = arcpy.gp.RasterCalculator_sa("581 * Power(\"%rastercalc%\" * 43560 / 5280 / 5280,0.650)")
+
+            # Process: Raster Calculator (6)
+            rastc100 = arcpy.gp.RasterCalculator_sa("719 * Power(\"%rastercalc%\" * 43560 * 43560 / 5280 / 5280,0.643)")
+
+            # Process: Raster Calculator
+            rastc = arcpy.gp.RasterCalculator_sa("144 * Power(\"%rastercalc%\"  * 43560 / 5280 / 5280,0.691)")
+
+            # Process: Raster Calculator (7)
+            q2 = arcpy.gp.RasterCalculator_sa("7.87*Power(\"%rastercalc%\",0.539) *Power( \"%rastercalc1%\",0.686)*Power(\"%rastc%\",0.29)")
+
+            # Process: Raster Calculator (8)
+            q5 = arcpy.gp.RasterCalculator_sa("16.3*Power(\"%rastercalc%\",0.489) *Power( \"%rastercalc1%\",0.572)*Power(\"%rastc%\",0.286)")
+
+            # Process: Raster Calculator (9)
+            q10 = arcpy.gp.RasterCalculator_sa("22.7*Power(\"%rastercalc%\",0.463) *Power( \"%rastercalc1%\",0.515)*Power(\"%rastc%\",0.289)")
+
+            # Process: Raster Calculator (4)
+            rastc25 = arcpy.gp.RasterCalculator_sa("467 * Power(\"%rastercalc%\" * 43560 / 5280 / 5280,0.655)")
+
+            # Process: Raster Calculator (10)
+            q25 = arcpy.gp.RasterCalculator_sa("28.5*Power(\"%rastercalc%\",0.39) *Power( \"%rastercalc1%\",0.436)*Power(\"%rastc25%\",0.338)")
+
+            # Process: Raster Calculator (11)
+            q50 = arcpy.gp.RasterCalculator_sa("37.4*Power(\"%rastercalc%\",0.391) *Power( \"%rastercalc1%\",0.396)*Power(\"%rastc%\",0.325)")
+
+            # Process: Raster Calculator (12)
+            q100 = arcpy.gp.RasterCalculator_sa("48*Power(\"%rastercalc%\",0.392) *Power( \"%rastercalc1%\",0.358)*Power(\"%rastc%\",0.312)")
         except Exception as err:
             log(traceback.format_exc())
             log(err)
             raise err
         return
 		
-www
